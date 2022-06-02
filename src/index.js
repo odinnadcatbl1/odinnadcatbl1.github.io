@@ -1,17 +1,27 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import App from './components/app/app';
+import { BrowserRouter as Router } from "react-router-dom";
+import { Provider } from 'react-redux';
+import CatService from './services/cat-service';
+import {CatServiceProvider} from './components/cat-service-context/cat-service-context'
+
+import store from './store';
+
+const catService = new CatService();
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <Provider store={store}>
+      <CatServiceProvider value={catService}>
+        <Router>
+          <App/>
+        </Router>
+      </CatServiceProvider>
+    </Provider>
   </React.StrictMode>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+
+
