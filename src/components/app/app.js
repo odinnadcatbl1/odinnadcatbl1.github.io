@@ -4,6 +4,7 @@ import { Route, Routes } from "react-router";
 import CatList from "../cat-list/cat-list";
 
 import './app.css'
+import LoveCatList from "../love-cat-list/love-cat-list";
 
 const App = () => {
     
@@ -12,7 +13,7 @@ const App = () => {
             <Header/>
             <Routes>
                 <Route path='/' element={<CatList/>}/>
-                <Route path='/favorite' element={<h1>page2</h1>}/>
+                <Route path='/favorite' element={<LoveCatList/>}/>
             </Routes>      
         </Fragment> 
     );

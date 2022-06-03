@@ -1,31 +1,39 @@
 import React, {useEffect} from "react";
 import './cat-list.css'
 import { connect } from "react-redux";
-import { fetchCats, catAddedToFavorite, catsLoaded } from "../../actions";
+import { fetchCats, catAddedToFavorite, catDeletedFromFavorite } from "../../actions";
 import withCatService from '../hoc/with-cat-service';
 
 const CatList = (props) => {
-    const {cats, isAlreadyLoaded} = props;
+    const {cats, isAlreadyLoaded, onAddedToFavorite, likedCats, onDeletedFromFavorite} = props;
     useEffect(()=>{
-        const {catService, catsLoaded} = props;
+        const {fetchCats} = props;
         if (!isAlreadyLoaded) {
-            catService.getCats()
-            .then((data)=>{
-                catsLoaded(data);
-            });
+            fetchCats();
         }
     }, []);
+
 
     return (
         <div className="container">
             <div className="cat-list">
                 {
                     cats.map((cat)=>{
+                        if (likedCats.filter((data) => data.id === cat.id).length > 0) {
+                            return (
+                                <div 
+                                    key={cat.id} 
+                                    className="cat liked-cat"
+                                    onClick={() => onDeletedFromFavorite(cat.id)}>
+                                    <img src={cat.url} alt={'cat-'+cat.id}/>
+                                </div>
+                            );
+                        }
                         return (
                             <div 
                                 key={cat.id} 
                                 className="cat"
-                                onClick={()=>{console.log(cat.id)}}>
+                                onClick={() => onAddedToFavorite(cat.id)}>
                                 <img src={cat.url} alt={'cat-'+cat.id}/>
                             </div>
                         );
@@ -37,12 +45,17 @@ const CatList = (props) => {
 
 };
 
-const mapStateToProps = ({cats, isAlreadyLoaded}) => {
-    return {cats, isAlreadyLoaded};
+const mapStateToProps = ({cats, isAlreadyLoaded, likedCats}) => {
+    return {cats, isAlreadyLoaded,likedCats};
 };
 
-const mapDispatchToProps = {
-    catsLoaded,
+const mapDispatchToProps = (dispatch, ownProps) => {
+    const {catService} = ownProps;
+    return {
+        fetchCats: fetchCats(catService, dispatch),
+        onAddedToFavorite: (id) => dispatch(catAddedToFavorite(id)),
+        onDeletedFromFavorite: (id) => dispatch(catDeletedFromFavorite(id)),
+    }
 };
 
 

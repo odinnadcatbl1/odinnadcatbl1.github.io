@@ -12,10 +12,19 @@ const catAddedToFavorite = (catId) => {
     };
 };
 
-const fetchCats = (catService, dispatch) => async () => {
-    await catService.getCats() 
-        .then((data)=>{dispatch(catsLoaded(data))})
-        .catch(console.log('in actions'))
+const catDeletedFromFavorite = (catId) => {
+    return {
+        type: 'DELETE_FROM_FAVORITE',
+        payload: catId
+    };
 };
 
-export {catAddedToFavorite, fetchCats, catsLoaded};
+const fetchCats = (catService, dispatch) => () => {
+    catService.getCats()
+        .then((data)=>{
+            dispatch(catsLoaded(data));
+        })
+        .catch(()=>{console.log('ERROR IN fetchCats')})
+}
+
+export {catAddedToFavorite, fetchCats, catDeletedFromFavorite};
