@@ -12,13 +12,42 @@ const findCat = (state, catId) => {
     return cat;
 };
 
-const updateItems = (state, action, catId) => {
-    const cat = findCat(state, catId);
+const deleteCat = (state, action) => {
+    const cat = findCat(state, action.payload);
+    const newData = state.likedCats.filter((data)=>{return data.id !== cat.id})
+    return {
+        ...state,
+        likedCats: [
+            ...newData
+        ]
+    }; 
+};
 
-    if (action.type === 'ADD_TO_FAVORITE') {
+const addCat = (state, action) => {
+    const newItem = {
+        id: findCat(state, action.payload).id,
+        url: findCat(state, action.payload).url
+    };
 
+    if (state.likedCats.filter((data)=>data.id === newItem.id).length > 0) {
+        
+        return {
+            ...state,
+            likedCats: [
+                state.likedCats.filter((data)=>{return data.id !== newItem.id})
+            ]
+        }
     }
+
+    return {
+        ...state,
+        likedCats: [
+            ...state.likedCats,
+            newItem
+        ]
+    };
 }
+
 
 const reducer = (state=initialState, action) => {
     switch (action.type) {
@@ -29,40 +58,9 @@ const reducer = (state=initialState, action) => {
                 isAlreadyLoaded: true,
             };
         case 'ADD_TO_FAVORITE':
-            
-            const newItem = {
-                id: findCat(state, action.payload).id,
-                url: findCat(state, action.payload).url
-            };
-
-            if (state.likedCats.filter((data)=>data.id === newItem.id).length > 0) {
-                
-                return {
-                    ...state,
-                    likedCats: [
-                        state.likedCats.filter((data)=>{return data.id !== newItem.id})
-                    ]
-                }
-            }
-
-            return {
-                ...state,
-                likedCats: [
-                    ...state.likedCats,
-                    newItem
-                ]
-            };
-           
+            return addCat(state, action);                       
         case 'DELETE_FROM_FAVORITE':
-            const cat = findCat(state, action.payload);
-            const newData = state.likedCats.filter((data)=>{return data.id !== cat.id})
-            return {
-                ...state,
-                likedCats: [
-                    ...newData
-                ]
-            }; 
-            
+            return deleteCat(state, action);
         default:
             return state;
     }
